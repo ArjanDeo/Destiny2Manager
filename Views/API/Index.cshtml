@@ -1,0 +1,25 @@
+﻿<h1><center>Welcome To the Destiny 2 API Overview.</center></h1>
+<h3><center>Please choose which statistic you would like to view.</center></h3>
+<div class="dropdown">
+   <center> <button onclick="myFunction()" class="dropbtn">Dropdown</button></center>
+    <div id="myDropdown" class="dropdown-content">
+        <a onclick="showPlayTime()">Total Playtime</a>
+        <a onclick="showLightLevel()">Current Light Level</a>
+        <a onclick="ShowPinnCap()">Current Pinnacle Cap</a>
+        <a id="showalldd" onclick="showAll()">Show All</a>
+    </div>
+</div>
+<p id="showalltxt"></p>
+<p id="totalplayed">Total Playtime: @ViewData["totalplayed"] </p>
+<p id="lightlevel">Current Light Level: @ViewData["lightlevel"] </p>
+<p id="pinncap">Date Last Played: @ViewData["lastplayed"] </p>
+<p id="fac">Date Last Played: @ViewData["emblemPath"] </p>
+<img src="@ViewData["emblemPath"]"/>
+<script>
+    var retmet = '@(Html.Raw(ViewData["lightlevel"]))'
+    function showAllDD() {
+        $('#showalltxt').text(retmet)
+    }
+    
+    
+</script>
