@@ -1,0 +1,40 @@
+﻿<html>
+<body>
+    <h1 style="text-align:center">
+        Welcome To the Destiny 2 API Overview.
+    </h1>
+    <h3 style="text-align:center">
+        Please choose which statistic you would like to view.
+    </h3>
+    <div class="dropdown">
+        <button onclick="myFunction()" class="dropbtn">Dropdown</button>
+        <div id="myDropdown" class="dropdown-content">
+            <a onclick="showPlayTime()">Total Playtime</a>
+            <a onclick="showLightLevel()">Current Light Level</a>
+            <a onclick="ShowPinnCap()">Current Pinnacle Cap</a>
+            <a id="showalldd" onclick="showAll()">Show All</a>
+        </div>
+    </div>
+    <div>
+        <p id="showalltxt"></p>
+        <p id="totalplayed">Total Playtime: @ViewData["totalplayed"] Minutes</p>
+        <p id="lightlevel">Current Light Level: @ViewData["lightlevel"] </p>
+        <p id="pinncap">Date Last Played: @ViewData["lastplayed"] </p>
+        <p id="fac">Emblem Location: @ViewData["emblemPath"] </p>
+        <img src="@ViewData["emblemPath"]" />
+        @*<p>Steam Username: @ViewData["steamuser"]</p>*@
+
+    </div>
+    <div style="text-align:center">
+        <a href="#" class="button medium pill bkg-charcoal-light bkg-hover-theme color-white color-hover-white">Pill Shaped</a>
+        <button class="dropbtn" onclick="authRedirect()">Authenticate(OAuth Bungie)</button>
+    </div>
+</body>
+</html>
+@*<script>
+    var llraw = '@(Html.Raw(ViewData["lightlevel"]))'
+
+    function showAllDD() {
+        $('#showalltxt').text(llraw)
+    }
+</script>*@

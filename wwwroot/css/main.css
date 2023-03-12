@@ -6,6 +6,8 @@
     font-size: 16px;
     border: none;
     cursor: pointer;
+    display: block;
+    margin: 0 auto;
 }
 
     /* Dropdown button on hover & focus */
@@ -17,6 +19,7 @@
 .dropdown {
     position: relative;
     display: inline-block;
+    text-align:center;
 }
 
 /* Dropdown Content (Hidden by Default) */
@@ -49,4 +52,23 @@
 /*Centering*/
 .h1bvisa {
     position:center
+}
+.center {
+    
+}
+.parent-container {
+    text-align: center;
+    display: flex;
+    justify-content: center;
+}
+
+.authbtn {
+    background-color: #3498DB;
+    color: white;
+    padding: 8px;
+    font-size: 16px;
+    border: none;
+    cursor: pointer;
+    display: block; /* make the button a block-level element */
+    margin: 0 auto; /* set the left and right margins to auto */
 }

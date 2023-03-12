@@ -65,6 +65,10 @@ namespace Destiny2ManagerMVC.Models
     {
         public Character character { get; set; }
         public UninstancedItemComponents uninstancedItemComponents { get; set; }
+        public string SteamId { get; set; }
+        public string StadiaId { get; set; }
+        public string TwitchId { get; set; }
+        public string Psnid { get; set; }
     }
 
     public class CharacterDataAPIModel
