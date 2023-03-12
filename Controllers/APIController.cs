@@ -51,7 +51,14 @@ namespace Destiny2ManagerMVC.Controllers
 
                     BungieCharacterDataModel CharacterData = await CharactersDataResponse.As<BungieCharacterDataModel>();
 
-                    ViewData["ll"] = CharacterData.Response.characters.data.Warlock.light;
+                    // 0 = Titan
+                    // 1 = Hunter
+                    // 2 = Warlock
+                    KeyValuePair<long, CharacterData> WarlockData = CharacterData.Response.characters.data.FirstOrDefault(x => x.Value.classType == 2);
+                    if (WarlockData.Value != null)
+                    {
+                        ViewData["ll"] = WarlockData.Value.light;
+                    }
                 }
             }
 

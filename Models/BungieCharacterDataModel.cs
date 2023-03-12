@@ -12,7 +12,7 @@ namespace Destiny2ManagerMVC.Models
         public MessageData MessageData { get; set; }
     }
 
-    public class Character
+    public class CharacterData
     {
         public string membershipId { get; set; }
         public int membershipType { get; set; }
@@ -40,20 +40,8 @@ namespace Destiny2ManagerMVC.Models
 
     public class Characters
     {
-        public Data data { get; set; }
+        public Dictionary<long, CharacterData> data { get; set; }
         public int privacy { get; set; }
-    }
-
-    public class Data
-    {
-        [JsonProperty("2305843009778354354")]
-        public Character Warlock { get; set; }
-
-        [JsonProperty("2305843009781104458")]
-        public Character Hunter { get; set; }
-
-        [JsonProperty("2305843010163474004")]
-        public Character Titan { get; set; }
     }
 
     public class EmblemColor
@@ -113,6 +101,4 @@ namespace Destiny2ManagerMVC.Models
         [JsonProperty("4244567218")]
         public int Strength { get; set; }
     }
-
-
 }
