@@ -11,67 +11,93 @@ namespace Destiny2ManagerMVC.Controllers
 {
     public class APIController : Controller
     {
-        
+
         private readonly string apikey = "cbd862bffe084ca896f9ee6371a6bbe3";
         private readonly string clientSecret = "";
+        private readonly FluentClient client;
+        public APIController()
+        {
+            client = new FluentClient();
+        }
+
         public async Task<IActionResult> DestinyInfo()
         {
             if (BungieConstants.Auth != null)
             {
-                FluentClient client = new FluentClient();
-                IResponse ResponseData = await client.GetAsync("https://www.bungie.net/Platform/User/GetCurrentBungieNetUser/")
+                IResponse UserDataResponse = await client.GetAsync("https://www.bungie.net/Platform/User/GetCurrentBungieNetUser/")
                     .WithOptions(ignoreHttpErrors: true)
                     .WithHeader("x-api-key", apikey)
                     .WithBearerAuthentication(BungieConstants.Auth.access_token);
-                string x =  await ResponseData.AsString();
-                CharacterDataAPIModel ResponseDataModel = await ResponseData.As<CharacterDataAPIModel>();
-                var ll = ResponseDataModel.Response.character.data.light;
-                ViewData["ll"] = ll;
+
+                BungieUserModel ResponseDataModel = await UserDataResponse.As<BungieUserModel>();
+
+
+                IResponse BungieUserMembershipsResponse = await client
+                    .GetAsync($"https://www.bungie.net/Platform/User/GetMembershipsById/{ResponseDataModel.Response.membershipId}/5/")
+                    .WithOptions(ignoreHttpErrors: true)
+                    .WithHeader("x-api-key", apikey)
+                    .WithBearerAuthentication(BungieConstants.Auth.access_token);
+
+                BungieUserMembershipsModel MembershipData = await BungieUserMembershipsResponse.As<BungieUserMembershipsModel>();
+                DestinyMembership? Membership = MembershipData.Response.destinyMemberships.FirstOrDefault(x => x.membershipType is 3 or 5);
+
+                if (Membership != null)
+                {
+                    IResponse CharactersDataResponse = await client
+                        .GetAsync($"https://www.bungie.net/Platform/Destiny2/{Membership.membershipType}/Profile/{Membership.membershipId}/?components=200")
+                        .WithOptions(ignoreHttpErrors: true)
+                        .WithHeader("x-api-key", apikey)
+                        .WithBearerAuthentication(BungieConstants.Auth.access_token);
+
+                    BungieCharacterDataModel CharacterData = await CharactersDataResponse.As<BungieCharacterDataModel>();
+
+                    ViewData["ll"] = CharacterData.Response.characters.data.Warlock.light;
+                }
             }
-				return View();
-			//    #region API Links
-			//    string CharInfo = "https://www.bungie.net/Platform/Destiny2/5/Profile/4611686018495570819/Character/2305843009776964460/?components=200";
-			//    string GjallarhornD1 = "https://www.bungie.net/platform/Destiny/Manifest/InventoryItem/1274330687/?components=300";
-			//    string SanitizedPlatformUN = "https://www.bungie.net/Platform/User/GetSanitizedPlatformDisplayNames/4611686018495570819/";
-			//    #endregion
-			//    #region API Request / Deserialization
 
-			//    HttpClient client = new HttpClient();
-			//    client.DefaultRequestHeaders.Add("x-api-key", apikey);
-			//    HttpResponseMessage responseRoute = await client.GetAsync(CharInfo);
-			//    responseRoute.EnsureSuccessStatusCode();
-			//    var responseRouteBody = await responseRoute.Content.ReadAsStringAsync();
-			//    var jsonDeserialize = JsonConvert.DeserializeObject<CharacterDataAPIModel>(responseRouteBody);
-			//    var playTime = "";
-			//    int lightlevel = 0;
-			//    string lastplayedDT = "";
-			//    var emblemPath = "";
-			//    var steamUser = "";
-			//    #endregion
-			//    #region API Info Registration
-			//    if (jsonDeserialize != null)
-			//    {
-			//        emblemPath = jsonDeserialize.Response.character.data.emblemPath;
-			//        playTime = jsonDeserialize.Response.character.data.minutesPlayedTotal;
-			//        lightlevel = jsonDeserialize.Response.character.data.light;
-			//        var lastplayed = jsonDeserialize.Response.character.data.dateLastPlayed;
-			//        lastplayedDT = Convert.ToDateTime(lastplayed).ToString("dd/MM/yyyy");
-			//        steamUser = jsonDeserialize.Response.SteamId;
-			//    }
-			//    #endregion
+            return View();
+            //    #region API Links
+            //    string CharInfo = "https://www.bungie.net/Platform/Destiny2/5/Profile/4611686018495570819/Character/2305843009776964460/?components=200";
+            //    string GjallarhornD1 = "https://www.bungie.net/platform/Destiny/Manifest/InventoryItem/1274330687/?components=300";
+            //    string SanitizedPlatformUN = "https://www.bungie.net/Platform/User/GetSanitizedPlatformDisplayNames/4611686018495570819/";
+            //    #endregion
+            //    #region API Request / Deserialization
+
+            //    HttpClient client = new HttpClient();
+            //    client.DefaultRequestHeaders.Add("x-api-key", apikey);
+            //    HttpResponseMessage responseRoute = await client.GetAsync(CharInfo);
+            //    responseRoute.EnsureSuccessStatusCode();
+            //    var responseRouteBody = await responseRoute.Content.ReadAsStringAsync();
+            //    var jsonDeserialize = JsonConvert.DeserializeObject<CharacterDataAPIModel>(responseRouteBody);
+            //    var playTime = "";
+            //    int lightlevel = 0;
+            //    string lastplayedDT = "";
+            //    var emblemPath = "";
+            //    var steamUser = "";
+            //    #endregion
+            //    #region API Info Registration
+            //    if (jsonDeserialize != null)
+            //    {
+            //        emblemPath = jsonDeserialize.Response.character.data.emblemPath;
+            //        playTime = jsonDeserialize.Response.character.data.minutesPlayedTotal;
+            //        lightlevel = jsonDeserialize.Response.character.data.light;
+            //        var lastplayed = jsonDeserialize.Response.character.data.dateLastPlayed;
+            //        lastplayedDT = Convert.ToDateTime(lastplayed).ToString("dd/MM/yyyy");
+            //        steamUser = jsonDeserialize.Response.SteamId;
+            //    }
+            //    #endregion
 
 
-			//    var pt = Convert.ToInt32(playTime) / 60;
-			//    ViewData["totalplayed"] = pt.ToString();
-			//    ViewData["lightlevel"] = lightlevel;
-			//    ViewData["lastplayed"] = lastplayedDT;
-			//    ViewData["emblempath"] = $"https://www.bungie.net/{emblemPath}";
-			//    ViewData["steamuser"] = steamUser;
+            //    var pt = Convert.ToInt32(playTime) / 60;
+            //    ViewData["totalplayed"] = pt.ToString();
+            //    ViewData["lightlevel"] = lightlevel;
+            //    ViewData["lastplayed"] = lastplayedDT;
+            //    ViewData["emblempath"] = $"https://www.bungie.net/{emblemPath}";
+            //    ViewData["steamuser"] = steamUser;
 
-		}
-		public async Task<IActionResult> Callback(string code)
+        }
+        public async Task<IActionResult> Callback(string code)
         {
-            FluentClient client = new FluentClient();
             IResponse ResponseData = await client.PostAsync("https://www.bungie.net/platform/app/oauth/token/")
                 .WithOptions(ignoreHttpErrors: true)
                 .WithBasicAuthentication("43209", "hQBeeLZg8JhVulMSYe4RIDrHdTd.kvfC772.sD.LjYw")
@@ -89,40 +115,40 @@ namespace Destiny2ManagerMVC.Controllers
 
         public async Task<IActionResult> Index()
         {
-            #region API Links
-            string CharInfo = "https://www.bungie.net/Platform/Destiny2/5/Profile/4611686018495570819/Character/2305843009776964460/?components=200";
-            string GjallarhornD1 = "https://www.bungie.net/platform/Destiny/Manifest/InventoryItem/1274330687/?components=300";
-            string SanitizedPlatformUN = "https://www.bungie.net/Platform/User/GetSanitizedPlatformDisplayNames/4611686018495570819/";
-            #endregion
-            #region API Request / Deserialization
-            HttpClient client = new HttpClient();
-            client.DefaultRequestHeaders.Add("x-api-key", apikey);
-            HttpResponseMessage responseRoute = await client.GetAsync(CharInfo);
-            responseRoute.EnsureSuccessStatusCode();
-            var responseRouteBody = await responseRoute.Content.ReadAsStringAsync();
-            var jsonDeserialize = JsonConvert.DeserializeObject<CharacterDataAPIModel>(responseRouteBody);
-            var playTime = "";
-            int lightlevel = 0;
-            string lastplayedDT = "";
-            var emblemPath = "";
-            var steamUser = "";
-            #endregion
-            #region API Info Registration
-            if (jsonDeserialize != null)
-            {
-                emblemPath = jsonDeserialize.Response.character.data.emblemPath;
-                playTime = jsonDeserialize.Response.character.data.minutesPlayedTotal;
-                lightlevel = jsonDeserialize.Response.character.data.light;
-                var lastplayed = jsonDeserialize.Response.character.data.dateLastPlayed;
-                lastplayedDT = Convert.ToDateTime(lastplayed).ToString("dd/MM/yyyy");
-                steamUser = jsonDeserialize.Response.SteamId;
-            }
-            ViewData["totalplayed"] = playTime;
-            ViewData["lightlevel"] = lightlevel;
-            ViewData["lastplayed"] = lastplayedDT;
-            ViewData["emblempath"] = $"https://www.bungie.net/{emblemPath}";
-            ViewData["steamuser"] = steamUser;
-            #endregion
+            //#region API Links
+            //string CharInfo = "https://www.bungie.net/Platform/Destiny2/5/Profile/4611686018495570819/Character/2305843009776964460/?components=200";
+            //string GjallarhornD1 = "https://www.bungie.net/platform/Destiny/Manifest/InventoryItem/1274330687/?components=300";
+            //string SanitizedPlatformUN = "https://www.bungie.net/Platform/User/GetSanitizedPlatformDisplayNames/4611686018495570819/";
+            //#endregion
+            //#region API Request / Deserialization
+            //HttpClient client = new HttpClient();
+            //client.DefaultRequestHeaders.Add("x-api-key", apikey);
+            //HttpResponseMessage responseRoute = await client.GetAsync(CharInfo);
+            //responseRoute.EnsureSuccessStatusCode();
+            //var responseRouteBody = await responseRoute.Content.ReadAsStringAsync();
+            //var jsonDeserialize = JsonConvert.DeserializeObject<CharacterDataAPIModel>(responseRouteBody);
+            //var playTime = "";
+            //int lightlevel = 0;
+            //string lastplayedDT = "";
+            //var emblemPath = "";
+            //var steamUser = "";
+            //#endregion
+            //#region API Info Registration
+            //if (jsonDeserialize != null)
+            //{
+            //    emblemPath = jsonDeserialize.Response.character.data.emblemPath;
+            //    playTime = jsonDeserialize.Response.character.data.minutesPlayedTotal;
+            //    lightlevel = jsonDeserialize.Response.character.data.light;
+            //    var lastplayed = jsonDeserialize.Response.character.data.dateLastPlayed;
+            //    lastplayedDT = Convert.ToDateTime(lastplayed).ToString("dd/MM/yyyy");
+            //    steamUser = jsonDeserialize.Response.SteamId;
+            //}
+            //ViewData["totalplayed"] = playTime;
+            //ViewData["lightlevel"] = lightlevel;
+            //ViewData["lastplayed"] = lastplayedDT;
+            //ViewData["emblempath"] = $"https://www.bungie.net/{emblemPath}";
+            //ViewData["steamuser"] = steamUser;
+            //#endregion
             return View();
         }
 
