@@ -13,13 +13,6 @@ window.onclick = function (event) {
         }
     }
 }
-function showAll() {
-    showAllDD()
-
-}
-function authRedirect() {
-    window.location.href = "https://www.bungie.net/en/OAuth/Authorize/?client_id=43209&response_type=code";
-}
 function showPlayTime() {
     var text = document.getElementById("totalplayed");
     if (text.style.display === "none") {

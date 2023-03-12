@@ -1,12 +1,15 @@
 ﻿using Microsoft.AspNetCore.Mvc;
 using Newtonsoft.Json;
 using Destiny2ManagerMVC.Models;
+using System.Collections.Specialized;
+using System.Web;
 
 namespace Destiny2ManagerMVC.Controllers
 {
     public class APIController : Controller
     {
         private readonly string apikey = "cbd862bffe084ca896f9ee6371a6bbe3";
+		private readonly string clientSecret = "";
 		public async Task<IActionResult> DestinyInfo()
 		{
 			#region API Links
@@ -46,6 +49,21 @@ namespace Destiny2ManagerMVC.Controllers
 			ViewData["steamuser"] = steamUser;
 			return View();
 		}
+	public async Task<IActionResult> Callback(string code)
+        {
+			var client = new HttpClient();
+			var request = new HttpRequestMessage(HttpMethod.Post, "https://www.bungie.net/Platform/App/OAuth/Token");
+			request.Headers.Add("Authorization", "Basic NDMyMDk6aFFCZWVMWmc4SmhWdWxNU1llNFJJRHJIZFRkLmt2ZkM3NzIuc0QuTGpZdw==");
+			var collection = new List<KeyValuePair<string, string>>();
+			collection.Add(new("grant_type", "authorization_code"));
+			collection.Add(new("code", code));
+			var content = new FormUrlEncodedContent(collection);
+			request.Content = content;
+			var response = await client.SendAsync(request);
+			response.EnsureSuccessStatusCode();
+			return Ok(code);
+
+        }
 		public async Task<IActionResult> Index()
         {
             #region API Links
