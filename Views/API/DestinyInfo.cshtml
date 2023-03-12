@@ -40,25 +40,29 @@
 			<div class="column width-8 offset-1">
 				<div class="row">
 					<div class="column width-12">
-						<p class="lead mb-50">Here's some pretty general facts about your time in Destiny!</p>
+						<p class="lead mb-50">Here's some pretty general facts @ViewData["pp"]about your time in Destiny!</p>
 					</div>
 				</div>
 				<div class="row flex">
 					<div class="column width-6">
 						<h6 class="mb-30 weight-bold text-uppercase">Play Time</h6>
-						<p class="mb-50">You've spent a grand total of <span class="mb-30 weight-bold text-uppercase">@ViewData["auth"]</span> hours playing Destiny 2! That's not very healthy.</p>
+						<p class="mb-50">You've spent a grand total of <span class="mb-30 weight-bold text-uppercase">@ViewData["pt"]</span> hours playing Destiny 2! That's not very healthy.</p>
 					</div>
 					<div class="column width-6">
 						<h6 class="mb-30 weight-bold text-uppercase">Light Level</h6>
-						<p class="mb-50">You've worked your way towards a light level of <span class="mb-30 weight-bold text-uppercase">@ViewData["ll"]!</span> Someone does their pinnacles.</p>
+						<p class="mb-50">You've worked your way towards a light level of <span class="mb-30 weight-bold text-uppercase">@ViewData["wll"]!</span> Someone does their pinnacles.</p>
 					</div>
 					<div class="column width-6">
 						<h6 class="mb-30 weight-bold text-uppercase">Last Session</h6>
 						<p>You last fed your addiction to Destiny on <span class="mb-30 weight-bold text-uppercase">@ViewData["lastplayed"].</span> Seriously, touch grass.</p>
 					</div>
 					<div class="column width-6">
-						<h6 class="mb-30 weight-bold text-uppercase">Emblem</h6>
-						<img src="@ViewData["emblemPath"]"> <p>My My. What Exquisite Taste.</p>
+						<h6 class="mb-30 weight-bold text-uppercase">Emblems</h6>
+						<div style="max-width: 400px">
+						<img style="max-width:100%;" src="@ViewData["warlockemblembkg"]">
+							<img style="max-width:100%;" src="@ViewData["hunteremblembkg"]">
+							<img style="max-width:100%;" src="@ViewData["titanemblembkg"]"> <p>My My. What Exquisite Taste.</p>
+						</div>
 					</div>
 				</div>
 			</div>
@@ -72,12 +76,12 @@
 				<div class="row content-grid-3">
 					<div class="grid-item horizon" data-animate-in="preset:slideInUpShort;duration:1000ms;" data-threshold="0.3">
 						<div class="thumbnail rounded no-margin-bottom" data-hover-easing="easeInOut" data-hover-speed="500" data-hover-bkg-color="#ffffff" data-hover-bkg-opacity="0.9">
-							<img src="~/images/team/team-member-1.jpg" width="760" height="500" alt="" />
+							<img src="@ViewData["warlockemblem"]" width="760" height="500" alt="" />
 						</div>
 						<div class="team-content-info center">
-							<h4 class="mb-5">Jason Ford</h4>
-							<h4 class="occupation">Developer</h4>
-							<p> you smell of @ViewData["ll"]</p>
+							<h4 class="mb-5">Warlock</h4>
+							<h4 class="occupation">@ViewData["wll"]</h4>
+							<p> Played for @ViewData["wlpt"]</p>
 							<ul class="social-list list-horizontal">
 								<li><a href="#"><span class="icon-facebook small"></span></a></li>
 								<li><a href="#"><span class="icon-twitter small"></span></a></li>
@@ -87,12 +91,12 @@
 					</div>
 					<div class="grid-item horizon" data-animate-in="preset:slideInUpShort;duration:1000ms;delay:300ms;" data-threshold="0.3">
 						<div class="thumbnail rounded no-margin-bottom" data-hover-easing="easeInOut" data-hover-speed="500" data-hover-bkg-color="#ffffff" data-hover-bkg-opacity="0.9">
-							<img src="~/images/team/team-member-3.jpg" width="760" height="500" alt="" />
+							<img src="@ViewData["hunteremblem"]" width="760" height="500" alt="" />
 						</div>
 						<div class="team-content-info center">
-							<h4 class="mb-5">Michael Andrews</h4>
-							<h4 class="occupation">Designer</h4>
-							<p>At vero eos et accusamus et iusto odio dignissimos ducimus qui blanditiis praesentium voluptatum deleniti atque corrupti quos dolores et quas molestias excepturi sint occaecati cupiditate non.</p>
+							<h4 class="mb-5">Hunter</h4>
+							<h4 class="occupation">@ViewData["hll"]</h4>
+							<p>Played for @ViewData["hpt"] hours.</p>
 							<ul class="social-list list-horizontal">
 								<li><a href="#"><span class="icon-facebook small"></span></a></li>
 								<li><a href="#"><span class="icon-twitter small"></span></a></li>
@@ -102,12 +106,12 @@
 					</div>
 					<div class="grid-item horizon" data-animate-in="preset:slideInUpShort;duration:1000ms;delay:600ms;" data-threshold="0.3">
 						<div class="thumbnail rounded no-margin-bottom" data-hover-easing="easeInOut" data-hover-speed="500" data-hover-bkg-color="#ffffff" data-hover-bkg-opacity="0.9">
-							<img src="~/images/team/team-member-4.jpg" width="760" height="500" alt="" />
+							<img src="@ViewData["titanemblem"]" width="760" height="500" alt="" />
 						</div>
 						<div class="team-content-info center">
-							<h4 class="mb-5">Samuel Banks</h4>
-							<h4 class="occupation">Illustrator</h4>
-							<p>At vero eos et accusamus et iusto odio dignissimos ducimus qui blanditiis praesentium voluptatum deleniti atque corrupti quos dolores et quas molestias excepturi sint occaecati cupiditate non.</p>
+							<h4 class="mb-5">Titan</h4>
+							<h4 class="occupation">@ViewData["tll"]</h4>
+							<p>Played for @ViewData["tpt"] hours.</p>
 							<ul class="social-list list-horizontal">
 								<li><a href="#"><span class="icon-facebook small"></span></a></li>
 								<li><a href="#"><span class="icon-behance small"></span></a></li>
