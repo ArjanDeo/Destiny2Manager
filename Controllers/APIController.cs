@@ -22,15 +22,15 @@ namespace Destiny2ManagerMVC.Controllers
 
         public async Task<IActionResult> DestinyInfo()
         {
-            if (BungieConstants.Auth == null)
+            while (BungieConstants.Auth == null)
             {
                 Response.Redirect("https://www.bungie.net/en/OAuth/Authorize/?client_id=43209&response_type=code");
             }
-            else if (BungieConstants.Auth != null)
+             if (BungieConstants.Auth != null)
             {
-                
                  
-                    IResponse UserDataResponse = await client.GetAsync("https://www.bungie.net/Platform/User/GetCurrentBungieNetUser/")
+                    IResponse UserDataResponse = await client
+                        .GetAsync("https://www.bungie.net/Platform/User/GetCurrentBungieNetUser/")
                         .WithOptions(ignoreHttpErrors: true)
                         .WithHeader("x-api-key", apikey)
                         .WithBearerAuthentication(BungieConstants.Auth.access_token);
@@ -46,9 +46,15 @@ namespace Destiny2ManagerMVC.Controllers
 
                     BungieUserMembershipsModel MembershipData = await BungieUserMembershipsResponse.As<BungieUserMembershipsModel>();
                     DestinyMembership? Membership = MembershipData.Response.destinyMemberships.FirstOrDefault(x => x.membershipType is 3 or 5);
+                  
 
-                    if (Membership != null)
+                if (Membership != null)
                     {
+                        IResponse GetHistoricalStatsForAccount = await client 
+                            .GetAsync($"https://www.bungie.net/Platform/Destiny2/{Membership.membershipType}/Account/{Membership.membershipId}/Stats/")
+                            .WithOptions(ignoreHttpErrors: true)
+                            .WithHeader("x-api-key", apikey);
+
                         IResponse CharactersDataResponse = await client
                             .GetAsync($"https://www.bungie.net/Platform/Destiny2/{Membership.membershipType}/Profile/{Membership.membershipId}/?components=200")
                             .WithOptions(ignoreHttpErrors: true)
@@ -56,17 +62,48 @@ namespace Destiny2ManagerMVC.Controllers
                             .WithBearerAuthentication(BungieConstants.Auth.access_token);
 
                         BungieCharacterDataModel CharacterData = await CharactersDataResponse.As<BungieCharacterDataModel>();
-
-                        // 0 = Titan
-                        // 1 = Hunter
-                        // 2 = Warlock
-                        KeyValuePair<long, CharacterData> WarlockData = CharacterData.Response.characters.data.FirstOrDefault(x => x.Value.classType == 2);
-				    	KeyValuePair<long, CharacterData> HunterData = CharacterData.Response.characters.data.FirstOrDefault(x => x.Value.classType == 1);
+				    	BungieHistoricalStatsModel HistoricalStats = await GetHistoricalStatsForAccount.As<BungieHistoricalStatsModel>();
+                        
+                    // 0 = Titan
+                    // 1 = Hunter
+                    // 2 = Warlock
+                    KeyValuePair<long, CharacterData> WarlockData = CharacterData.Response.characters.data.FirstOrDefault(x => x.Value.classType == 2);
+                //    KeyValuePair<long, BungieHistoricalStatsModel> HistoricalStatsData = HistoricalStats.Response();
+                    KeyValuePair<long, CharacterData> HunterData = CharacterData.Response.characters.data.FirstOrDefault(x => x.Value.classType == 1);
 				    	KeyValuePair<long, CharacterData> TitanData = CharacterData.Response.characters.data.FirstOrDefault(x => x.Value.classType == 0);
-                   double thoursPlayed = 0.0;
+                    BungieEquipItemModel EquipPayload = new BungieEquipItemModel()
+                    {
+                        itemId = 6917529859030182332,
+                        membershipType = Membership.membershipType,
+                        characterId = Int64.Parse(WarlockData.Value.characterId)
+
+                    };
+                    IResponse GetItemData = await client
+                               .GetAsync($"https://www.bungie.net/Platform/Destiny2/5/Profile/{ResponseDataModel.Response.membershipId}/Character/{WarlockData.Value.characterId}/?components=205")
+                               .WithOptions(ignoreHttpErrors: true)
+                               .WithHeader("x-api-key", apikey);
+                         PHItemDataModel ItemData = await GetItemData.As<PHItemDataModel>();
+
+                    double thoursPlayed = 0.0;
 					double hhoursPlayed = 0.0;
 					double whoursPlayed = 0.0;
+
+                    if (GetItemData != null) {
+                        IResponse EquipAurvandil = await client
+                                .PostAsync("https://www.bungie.net/Platform/Destiny2/Actions/Items/EquipItem/")
+                                .WithOptions(ignoreHttpErrors: true)
+                                //.WithHeader("Content-Type", "application/json")
+                                .WithHeader("x-api-key", apikey)
+                                .WithBody(EquipPayload)
+                                .WithBearerAuthentication(BungieConstants.Auth.access_token);
+                        //string ChromaRush = $"https://www.bungie.net/{}"
+
+                    }
+                    if (HistoricalStats != null) {
+                        string publiceventscompleted = $"https://www.bungie.net/{HistoricalStats.Response.mergedAllCharacters.results.allPvE.allTime.heroicPublicEventsCompleted}";
+                        ViewData["pec"] = publiceventscompleted;
                     
+                    }
 					if (TitanData.Value != null)
                     {
                             string titanemblembkg = $"https://www.bungie.net{TitanData.Value.emblemBackgroundPath}";
@@ -92,6 +129,9 @@ namespace Destiny2ManagerMVC.Controllers
 					}
 					if (WarlockData.Value != null)
                     {
+                      
+                            
+
                         string warlockemblembkg = $"https://www.bungie.net{WarlockData.Value.emblemBackgroundPath}";
                         string warlockemblem = $"https://www.bungie.net{WarlockData.Value.emblemPath}";
 						ViewData["wll"] = WarlockData.Value.light;
