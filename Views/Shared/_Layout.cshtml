@@ -575,7 +575,14 @@
 							<li>
 								<!-- Button -->
 								<div class="v-align-middle">
-									<a id="bungieAuth" href="https://www.bungie.net/en/OAuth/Authorize/?client_id=43209&response_type=code" class="button medium pill bkg-charcoal-light bkg-hover-theme color-white color-hover-white">Bungie Authentication</a>
+									@if (ViewBag.ResponseData == null)
+									{
+										<a id="bungieAuth" href="https://www.bungie.net/en/OAuth/Authorize/?client_id=43209&response_type=code" class="button medium pill bkg-charcoal-light bkg-hover-theme color-white color-hover-white">Bungie Authentication</a>
+
+									} else
+									{
+										<a class="button medium pill bkg-charcoal-light color-white">Authenticated!</a>
+									}
 								</div>
 							</li>
 							<li class="aux-navigation hide">
